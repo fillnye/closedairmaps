@@ -10,7 +10,8 @@ def Amdtscraper(x):
         return x
 
 
-id = 120000000
+
+id = -1
 f = open("NAV.xhtml", "r")
 tree = ET.fromstring(f.read())
 for i in tree[1][1][1][1][1]:
@@ -35,5 +36,17 @@ for i in tree[1][1][1][1][1]:
         print("frequency:" + i[2][1][0].text)
     print("Long:" + Amdtscraper(i[4][0][0]).text)
     print("Lat:" + Amdtscraper(i[4][1][0]).text)
-    id+=1
+    try:
+     print("Ele:" + Amdtscraper(i[5][0][0]).text + " FT")
+    except IndexError:
+     pass
+    try:
+     s = Amdtscraper(i[7][0][0]).text
+     for j in Amdtscraper(i[7][0][0]):
+        if j.tail != None:
+            s += "\n" + j.tail
+     print("Notes:" + s)
+    except IndexError:
+     pass
+    id-=1
     

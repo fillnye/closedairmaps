@@ -10,10 +10,12 @@ def Amdtscraper(x):
         return x
 
 
-id = 100000000
+id = -1
 f = open("SP.xhtml", "r")
 tree = ET.fromstring(f.read())
+osmxml = ET.Element(osm, {'version':'0.6', 'generator':'openAirWays'})
 for i in tree[1][1][1][1][:-1]:
+    x = ET.Element(node,{'id':str(id), 'action':'modify', 'visible':'true'})
     print("id:" + str(id))
     print("Name:" +  Amdtscraper(i[0][0]).text)
     print("Long:" + Amdtscraper(i[1][0][0]).text)
@@ -23,7 +25,15 @@ for i in tree[1][1][1][1][:-1]:
     except IndexError:
      pass
     try:
-     print("Notes:" + Amdtscraper(i[4][0][0]).text)
+     s = Amdtscraper(i[4][0][0]).text
+     for j in Amdtscraper(i[4][0][0]):
+        if j.tail != None:
+            s += "\n" + j.tail
+     print("Notes:" + s)
     except IndexError:
-     print("Notes:None")
-    id+=1
+     pass
+    osmxml.append(x)
+    id-=1
+
+osmxmltree = ET.ElementTree(element=osmxml)
+osmxmltree.write("output.xml")
