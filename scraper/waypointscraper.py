@@ -9,14 +9,25 @@ def Amdtscraper(x):
   except IndexError:
         return x
 
+def convertTODecimal(y, x):
+    xneg = 1
+    yneg = 1
+    if(x[len(x)-1]=='W'):
+        xneg=-1
+    if(y[len(y)-1]=='S'):
+        yneg=-1
+    return [round(int(y[0:2])+int(y[2:4])/60.0+float(y[4:(len(y)-1)])/3600.0*yneg,11),round((int(x[0:3])+int(x[3:5])/60.0+float(x[5:(len(x)-1)])/3600)*xneg,11)]
+
 
 id = -1
 f = open("SP.xhtml", "r")
 tree = ET.fromstring(f.read())
-osmxml = ET.Element(osm, {'version':'0.6', 'generator':'openAirWays'})
+osmxml = ET.Element("osm", {'version':'0.6', 'generator':'openAirWays'})
 for i in tree[1][1][1][1][:-1]:
-    x = ET.Element(node,{'id':str(id), 'action':'modify', 'visible':'true'})
+    coords = convertTODecimal(Amdtscraper(i[1][0][0]).text, Amdtscraper(i[1][1][0]).text)
+    x = ET.Element("node",{'id':str(id), 'action':'modify', 'visible':'true', "lat":str(coords[0]), "lon":str(coords[1])})
     print("id:" + str(id))
+    x.append(ET.Element("tag",{"k":"name","v":Amdtscraper(i[0][0]).text}))
     print("Name:" +  Amdtscraper(i[0][0]).text)
     print("Long:" + Amdtscraper(i[1][0][0]).text)
     print("Lat:" + Amdtscraper(i[1][1][0]).text)
@@ -36,4 +47,5 @@ for i in tree[1][1][1][1][:-1]:
     id-=1
 
 osmxmltree = ET.ElementTree(element=osmxml)
-osmxmltree.write("output.xml")
+ET.indent(osmxmltree, space="\t", level=0)
+osmxmltree.write("output.osm")
