@@ -21,7 +21,7 @@ def convertTODecimal(y, x):
 
 
 id = -1
-waypointlist = {}
+waypointlist = []
 f = open("SP.xhtml", "r")
 tree = ET.fromstring(f.read())
 osmxml = ET.Element("osm", {'version':'0.6', 'generator':'openAirWays'})
@@ -31,10 +31,11 @@ for i in tree[1][1][1][1][:-1]:
     print("id:" + str(id))
     x.append(ET.Element("tag",{"k":"name","v":Amdtscraper(i[0][0]).text}))
     x.append(ET.Element("tag",{"k":"aero","v":"waypoint"}))
+    print(Amdtscraper(i[0][0]).text)
     print("Name:" +  Amdtscraper(i[0][0]).text)
     print("Long:" + Amdtscraper(i[1][0][0]).text)
     print("Lat:" + Amdtscraper(i[1][1][0]).text)
-    waypointlist[Amdtscraper(i[0][0]).text] = id
+    waypointlist.append({"name":Amdtscraper(i[0][0]).text,"id":id})
     try:
      print("FRA:" + Amdtscraper(i[3][0]).text)
      x.append(ET.Element("tag",{"k":"aero:FRA","v":Amdtscraper(i[3][0]).text}))
@@ -90,7 +91,7 @@ for i in tree[1][1][1][1][1]:
         x.append(ET.Element("tag",{"k":"aero:channel","v":i[2][0][0].text}))
     print("Long:" + Amdtscraper(i[4][0][0]).text)
     print("Lat:" + Amdtscraper(i[4][1][0]).text)
-    waypointlist[i[0][0][0].text] = id
+    waypointlist.append({"name":i[0][0][0].text,"id":id})
     try:
      print("Ele:" + Amdtscraper(i[5][0][0]).text + " FT")
      x.append(ET.Element("tag",{"k":"ele","v":Amdtscraper(i[5][0][0]).text}))
@@ -115,6 +116,7 @@ for i in tree[1][1][1][1][1]:
 osmxmltree = ET.ElementTree(element=osmxml)
 ET.indent(osmxmltree, space="\t", level=0)
 osmxmltree.write("output.osm")
+print(waypointlist)
 
 
 
