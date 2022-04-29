@@ -138,6 +138,7 @@ print(waypointlist)
 for i in tree[1][1][1:]:
   k = 1
   y = ""
+  route = i[2][0][0][0][0].text
   for j in i[2][1:]:
       if Amdtscraper(j[0]).text == "∆" or j[0].text == " " or Amdtscraper(j[0]).text == "▲":
        if j[1][0].tag == "{http://www.w3.org/1999/xhtml}strong":
@@ -161,6 +162,8 @@ for i in tree[1][1][1:]:
         x = ET.Element("way",{'id':str(id), 'action':'modify', 'visible':'true'})
         x.append(ET.Element("nd",{"ref":str(waypointlist.index(findName(k-1,i))*-1)}))
         x.append(ET.Element("nd",{"ref":str(waypointlist.index(findName(k+1,i))*-1)}))
+        x.append(ET.Element("tag",{"k":"aero","v":"leg"}))
+        x.append(ET.Element("tag",{"k":"name","v":route}))
         print("Type Leg")
         print("RNP: " + j[0][0].text)
         if Amdtscraper(j[1][0][0][0][0][0][0]).text == "- ":
