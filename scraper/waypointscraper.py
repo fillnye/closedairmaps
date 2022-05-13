@@ -154,6 +154,8 @@ for i in tree[1][1][1:]:
         print("Name:" + j[1][0].text)
        if Amdtscraper(j[0]).text == "▲":
         print("flyover=true")
+        print(waypointlist.index(j[1][0].text))
+        osmxml[waypointlist.index(j[1][0].text)-1].append(ET.Element("tag",{"k":"aero:flyover","v":"yes"}))
        #print("Coord 1 " + j[2][0].text)
        #print("Coord 2 " + j[2][2].text)
        if j[4].text != " ":
@@ -164,37 +166,50 @@ for i in tree[1][1][1:]:
         x.append(ET.Element("nd",{"ref":str(waypointlist.index(findName(k+1,i))*-1)}))
         x.append(ET.Element("tag",{"k":"aero","v":"leg"}))
         x.append(ET.Element("tag",{"k":"name","v":route}))
+        x.append(ET.Element("tag",{"k":"aero:rnp","v":j[0][0].text}))
         print("Type Leg")
         print("RNP: " + j[0][0].text)
         if Amdtscraper(j[1][0][0][0][0][0][0]).text == "- ":
           print("DP1: -")
         else:
           print("DP1: " + Amdtscraper(j[1][0][0][0][0][0][0][0]).text)
+          x.append(ET.Element("tag",{"k":"aero:magdown","v":Amdtscraper(j[1][0][0][0][0][0][0][0]).text}))
         if Amdtscraper(j[1][0][0][0][1][0][0]).text == " -":
           print("DP2: -")
         else:
+          x.append(ET.Element("tag",{"k":"aero:magup","v":Amdtscraper(j[1][0][0][0][1][0][0][0]).text}))
           print("DP2: " + Amdtscraper(j[1][0][0][0][1][0][0][0]).text)
         print("DP3: " + Amdtscraper(j[2][0][0]).text)
+        x.append(ET.Element("tag",{"k":"aero:greatdist","v":Amdtscraper(j[2][0][0]).text}))
         print("DP4: " + Amdtscraper(j[3][0][0][0][0][0][0][0]).text + " " + Amdtscraper2(j[3][0][0][0][0][0][0],1).text)
+        x.append(ET.Element("tag",{"k":"aero:upperlimit","v":Amdtscraper(j[3][0][0][0][0][0][0][0]).text + " " + Amdtscraper2(j[3][0][0][0][0][0][0],1).text}))
         print("DP5: " + Amdtscraper(j[3][0][0][0][1][0][0][0]).text + " " + Amdtscraper2(j[3][0][0][0][1][0][0],1).text)
+        x.append(ET.Element("tag",{"k":"aero:lowerlimit","v":Amdtscraper(j[3][0][0][0][1][0][0][0]).text + " " + Amdtscraper2(j[3][0][0][0][1][0][0],1).text}))
         if j[4].text != " " and len(j[4])<7:
            print("DP6: " + j[4][0].text)
+           x.append(ET.Element("tag",{"k":"aero:flseriesdown","v":j[4][0].text}))
            print("DP7: " + Amdtscraper(j[4][1][0][0][0][0][0]).text + " " + Amdtscraper2(j[4][1][0][0][0][0],1).text)
+           x.append(ET.Element("tag",{"k":"aero:cruisemindown","v":Amdtscraper(j[4][1][0][0][0][0][0]).text + " " + Amdtscraper2(j[4][1][0][0][0][0],1).text}))
            print("DP8: " + Amdtscraper(j[4][1][0][0][1][0][0]).text + " " + Amdtscraper2(j[4][1][0][0][1][0],1).text)
+           x.append(ET.Element("tag",{"k":"aero:cruisemaxdown","v":Amdtscraper(j[4][1][0][0][1][0][0]).text + " " + Amdtscraper2(j[4][1][0][0][1][0],1).text}))
         else:
            print("DP6: -")
            print("DP7: -")
            print("DP8: -")
         if j[5].text != " " and len(j[5])<7:
            print("DP9: " + j[5][0].text)
+           x.append(ET.Element("tag",{"k":"aero:flseriesup","v":j[5][0].text}))
            print("DP10: " + Amdtscraper(j[5][1][0][0][0][0][0]).text + " " + Amdtscraper2(j[5][1][0][0][0][0],1).text)
+           x.append(ET.Element("tag",{"k":"aero:cruiseminup","v":Amdtscraper(j[5][1][0][0][0][0][0]).text + " " + Amdtscraper2(j[5][1][0][0][0][0],1).text}))
            print("DP11: " + Amdtscraper(j[5][1][0][0][1][0][0]).text + " " + Amdtscraper2(j[5][1][0][0][1][0],1).text)
+           x.append(ET.Element("tag",{"k":"aero:cruisemaxup","v":Amdtscraper(j[5][1][0][0][1][0][0]).text + " " + Amdtscraper2(j[5][1][0][0][1][0],1).text}))
         else:
            print("DP9: -")
            print("DP10: -")
            print("DP11: -")
         if j[6].text != " ":
            print("Notes" + j[6][0].attrib["title"].split("\n")[2].strip())
+           x.append(ET.Element("tag",{"k":"aero:notes","v":j[6][0].attrib["title"].split("\n")[2].strip()}))
         osmxml.append(x)
         id-=1
         
